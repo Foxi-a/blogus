@@ -1,12 +1,12 @@
-import { PrismaClient } from "../src/generated/prisma/client.ts";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 
 
-const unauthenticated = (res) => {
-  res.status(401).json({ error: "Session expired or invalid" });
-}
+// const unauthenticated = (res) => {
+//   res.status(401).json({ error: "Session expired or invalid" });
+// }
 
 
 
