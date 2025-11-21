@@ -13,6 +13,8 @@ import Auth from "./pages/Auth";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
+import "highlight.js/styles/github.css"
+
 
 
 const queryClient = new QueryClient();

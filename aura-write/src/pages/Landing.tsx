@@ -2,8 +2,27 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Sparkles, FileText, Wand2, BarChart3, Zap, Check , Layers , Upload , Settings} from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 
 const Landing = () => {
+
+const {getToken} = useAuth()
+
+
+const [token , setToken] = useState(undefined)
+
+useEffect(() => {
+
+  const fetchToken = async () => {
+
+    const userToken = await getToken()
+    setToken(userToken)
+  }
+
+  fetchToken()
+}, [])
+
 const features = [
   {
     icon: FileText,
@@ -58,24 +77,59 @@ const features = [
             </Button>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <Link to="/sign-in">
-              <Button 
-                variant="outline"
-                className="h-9 rounded-lg px-4 text-sm backdrop-blur-md bg-white/10 hover:bg-white/20"
-              >
-                Sign In
-              </Button>
-            </Link>
+{token === undefined ? (
+  // ✨ Beautiful loading shimmer (no flash)
+  <div className="h-9 w-32 rounded-lg bg-white/10 animate-pulse backdrop-blur-md" />
 
-            <Link to="/sign-up">
-              <Button 
-                className="h-9 rounded-lg px-4 text-sm font-medium bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
-              >
-                Sign Up
-              </Button>
-            </Link>
-          </div>
+) : token ? (
+  // Logged in → Dashboard button
+<Link to="/dashboard">
+<Button
+  variant="outline"
+  className="
+    h-9 px-5 rounded-lg font-medium
+    border border-black/80 
+    text-black
+    bg-white
+    hover:bg-black/5
+    transition-all
+  "
+>
+  Dashboard
+</Button>
+
+
+
+
+</Link>
+
+) : (
+  // Logged out → Show Sign In + Sign Up
+  <div className="flex items-center gap-3 animate-fade-in">
+    <Link to="/sign-in">
+      <Button
+        variant="outline"
+        className="h-9 px-4 rounded-lg text-sm 
+               backdrop-blur-md bg-white/10 hover:bg-white/20
+               border-white/20 shadow-sm transition-all duration-300"
+      >
+        Sign In
+      </Button>
+    </Link>
+
+    <Link to="/sign-up">
+      <Button
+        className="h-9 px-4 rounded-lg text-sm font-medium 
+               bg-primary text-primary-foreground hover:bg-primary/90
+               shadow-md transition-all duration-300"
+      >
+        Sign Up
+      </Button>
+    </Link>
+  </div>
+)}
+
+
         </div>
 
       </div>

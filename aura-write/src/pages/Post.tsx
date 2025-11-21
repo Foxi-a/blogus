@@ -4,6 +4,10 @@ import { Zap, Clock, ArrowLeft, Share2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
+import "highlight.js/styles/github.css"
+import hljs from "highlight.js";
+
+
 
 type Article = {
   id: number;
@@ -229,8 +233,11 @@ const readableDate = new Date("2025-11-21T04:39:13.589Z").toLocaleDateString(
 const contentWithIds = addIdsToH2(articlee?.content || "");
 
 
+useEffect(() => {
+  hljs.highlightAll();
+}, [articlee]);
 
-  
+
 
 if (!articlee) {
   return <p className="p-10 text-center">Loading...</p>;

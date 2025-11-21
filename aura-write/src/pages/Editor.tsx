@@ -7,6 +7,19 @@ import Image from "@tiptap/extension-image";
 import { Button } from "@/components/ui/button";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
+import { all, createLowlight } from 'lowlight'
+import javascript from "highlight.js/lib/languages/javascript"
+import golang from "highlight.js/lib/languages/golang"
+import "highlight.js/styles/github.css"
+
+
+const lowlight = createLowlight(all)
+
+// lowlight.register('javascript', javascript)
+lowlight.register('js', javascript)
+
+
 
 import { 
   Zap, 
@@ -50,7 +63,9 @@ const Editor = () => {
   const [linkUrl, setLinkUrl] = useState("");
   const { toast } = useToast();
   const {getToken} = useAuth()
+
   const backend_url_for_post = import.meta.env.VITE_BACKEND_URL_FOR_POST
+  // const backend_url_for_post = import.meta.env.VITE_BACKEND_URL_FOR_POST_LOCAL
 
   const editor = useEditor({
     extensions: [
@@ -58,7 +73,11 @@ const Editor = () => {
         heading: {
           levels: [1, 2],
         },
+        codeBlock: false,
       }),
+      CodeBlockLowlight.configure({
+      lowlight,
+    }),
       Placeholder.configure({
         placeholder: "Start writing your article...",
       }),
@@ -78,6 +97,37 @@ const Editor = () => {
       attributes: {
         class: "prose-editor max-w-none focus:outline-none min-h-[500px] px-12 py-8",
       },
+      handleKeyDown: (view, event) => {
+    const { state } = view;
+    const { selection } = state;
+
+    // Auto-indent inside codeblock
+    if (event.key === "Enter") {
+      const parent = state.selection.$from.parent;
+      if (parent.type.name === "codeBlock") {
+        const before = parent.textBetween(0, selection.$from.parentOffset);
+        const indent = before.match(/^\s+/)?.[0] ?? "";
+
+        event.preventDefault();
+        view.dispatch(
+          view.state.tr.insertText("\n" + indent, selection.from, selection.to)
+        );
+        return true;
+      }
+    }
+
+    // Tab → insert spaces inside code block
+    if (event.key === "Tab") {
+      const parent = state.selection.$from.parent;
+      if (parent.type.name === "codeBlock") {
+        event.preventDefault();
+        view.dispatch(
+          view.state.tr.insertText("  ", selection.from, selection.to)
+        );
+        return true;
+      }
+    }
+  },
     },
     onUpdate: ({ editor }) => {
       // Autosave trigger

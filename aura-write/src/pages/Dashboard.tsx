@@ -35,11 +35,8 @@ const Dashboard = () => {
   const [articless , setArticle] = useState<Article[]>([])
   const { getToken } = useAuth();
   const backend_url_for_posts = import.meta.env.VITE_BACKEND_URL_FOR_GET
+  // const backend_url_for_posts = import.meta.env.VITE_BACKEND_URL_FOR_GET_LOCAL
 
-
-  const countWords = (content: string) => {
-
-  }
 
   useEffect(() => {
   // 1. Load cached posts from localStorage (if exist)
